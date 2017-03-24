@@ -9,6 +9,8 @@ import (
 	"math/rand"
 	"os"
 	"sync"
+
+	"github.com/paulhankin/poker"
 )
 
 // A RolloutEvaluator gives the opponent random hands, sees
@@ -61,7 +63,7 @@ func NewSampledEvaluatorFromRollout(re *RolloutEvaluator) (*SampledEvaluator, er
 }
 
 // Evaluator returns a hand evaluator for the given set of cards.
-func (se *SampledEvaluator) Evaluator(cs []Card) func(f, m, b int16) float64 {
+func (se *SampledEvaluator) Evaluator(cs []poker.Card) func(f, m, b int16) float64 {
 	return se.evaluateHand
 }
 
@@ -161,13 +163,13 @@ func UnmarshalSampledEvaluator(r io.Reader) (*SampledEvaluator, error) {
 	return &se, nil
 }
 
-func rollout(cs []Card, opp HandEvaluator, N int) (played [][3]int16, wins [3][]float64) {
-	deck := make([]Card, 0, 52-len(cs))
-	h := map[Card]bool{}
+func rollout(cs []poker.Card, opp HandEvaluator, N int) (played [][3]int16, wins [3][]float64) {
+	deck := make([]poker.Card, 0, 52-len(cs))
+	h := map[poker.Card]bool{}
 	for _, c := range cs {
 		h[c] = true
 	}
-	for _, c := range Cards {
+	for _, c := range poker.Cards {
 		if !h[c] {
 			deck = append(deck, c)
 		}
@@ -179,7 +181,7 @@ func rollout(cs []Card, opp HandEvaluator, N int) (played [][3]int16, wins [3][]
 	wg.Add(workers)
 	for w := 0; w < workers; w++ {
 		go func() {
-			mydeck := append([]Card{}, deck...)
+			mydeck := append([]poker.Card{}, deck...)
 			for c := range cases {
 				for i := 0; i < 13; i++ {
 					j := rand.Intn(len(mydeck)-i) + i
@@ -187,7 +189,7 @@ func rollout(cs []Card, opp HandEvaluator, N int) (played [][3]int16, wins [3][]
 				}
 				hand, _ := Play(mydeck[:13], opp)
 				played[c] = [3]int16{
-					Eval3(&hand.Front), Eval5(&hand.Middle), Eval5(&hand.Back),
+					poker.Eval3(&hand.Front), poker.Eval5(&hand.Middle), poker.Eval5(&hand.Back),
 				}
 			}
 			wg.Done()
@@ -199,7 +201,7 @@ func rollout(cs []Card, opp HandEvaluator, N int) (played [][3]int16, wins [3][]
 	close(cases)
 	wg.Wait()
 	for i := 0; i < 3; i++ {
-		wins[i] = make([]float64, ScoreMax+1)
+		wins[i] = make([]float64, poker.ScoreMax+1)
 	}
 	for _, s := range played {
 		for i := 0; i < 3; i++ {
@@ -227,7 +229,7 @@ func (re *RolloutEvaluator) Init() {
 // Evaluator returns a hand evaluator for the given set of cards. Depending
 // on the options, this may or may not involve performing an expensive
 // rollout first.
-func (re *RolloutEvaluator) Evaluator(cs []Card) func(f, m, b int16) float64 {
+func (re *RolloutEvaluator) Evaluator(cs []poker.Card) func(f, m, b int16) float64 {
 	played, wins := re.played, re.wins
 	if !re.PreRollout {
 		played, wins = rollout(cs, re.Opponent, re.N)
@@ -266,5 +268,5 @@ func cmp(a0, b0, a1, b1, a2, b2 int16) int {
 // The scoring used is 2-4 scoring: one point for each place won, and one point
 // for winning the majority of the places.
 func CompareHands(h0, h1 *Hand) int {
-	return cmp(Eval3(&h0.Front), Eval3(&h1.Front), Eval5(&h0.Middle), Eval5(&h1.Middle), Eval5(&h0.Back), Eval5(&h1.Back))
+	return cmp(poker.Eval3(&h0.Front), poker.Eval3(&h1.Front), poker.Eval5(&h0.Middle), poker.Eval5(&h1.Middle), poker.Eval5(&h0.Back), poker.Eval5(&h1.Back))
 }

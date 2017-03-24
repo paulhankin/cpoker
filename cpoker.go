@@ -4,19 +4,21 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+
+	"github.com/paulhankin/poker"
 )
 
 // A Hand is a full Chinese poker hand.
 type Hand struct {
-	Front  [3]Card
-	Middle [5]Card
-	Back   [5]Card
+	Front  [3]poker.Card
+	Middle [5]poker.Card
+	Back   [5]poker.Card
 }
 
 func (h *Hand) String() string {
-	fd, _ := Describe(h.Front[:])
-	md, _ := Describe(h.Middle[:])
-	bd, _ := Describe(h.Back[:])
+	fd, _ := poker.Describe(h.Front[:])
+	md, _ := poker.Describe(h.Middle[:])
+	bd, _ := poker.Describe(h.Back[:])
 	return fmt.Sprintf("%v (%s), %v (%s), %v (%s)", h.Front, fd, h.Middle, md, h.Back, bd)
 }
 
@@ -24,7 +26,7 @@ func (h *Hand) String() string {
 type HandEvaluator interface {
 	// Evaluator should, given cards, return a function that can
 	// evaluate hands created from those cards.
-	Evaluator(c []Card) func(evf, evm, evb int16) float64
+	Evaluator(c []poker.Card) func(evf, evm, evb int16) float64
 }
 
 // A MaxProdEvaluator evaluates hands by considering the product of the ranks
@@ -33,12 +35,12 @@ type MaxProdEvaluator struct{}
 
 // Evaluator returns the function that evaluates hands based on the product
 // of their ranks.
-func (MaxProdEvaluator) Evaluator(_ []Card) func(evf, evm, evb int16) float64 {
+func (MaxProdEvaluator) Evaluator(_ []poker.Card) func(evf, evm, evb int16) float64 {
 	return evaluateProdHand
 }
 
 func evaluateProdHand(f, m, b int16) float64 {
-	return float64(f) * float64(m) * float64(b) / (ScoreMax * ScoreMax * ScoreMax)
+	return float64(f) * float64(m) * float64(b) / (poker.ScoreMax * poker.ScoreMax * poker.ScoreMax)
 }
 
 func next3(ix *[3]int) bool {
@@ -74,18 +76,18 @@ type EvalStats struct {
 
 // Play takes 13 cards and returns the hand for which
 // the evaluator returns the largest value.
-func Play(c []Card, he HandEvaluator) (Hand, EvalStats) {
+func Play(c []poker.Card, he HandEvaluator) (Hand, EvalStats) {
 	stats := EvalStats{}
 	evaluator := he.Evaluator(c)
 	maxima := make([][3]int16, 0, 128)
 	best, bestEV := Hand{}, -9999999.9
 	fIdx := [3]int{-1, 1, 2} // Which cards go in front
 	for next3(&fIdx) {
-		front := [3]Card{c[fIdx[0]], c[fIdx[1]], c[fIdx[2]]}
-		ef := Eval3(&front)
+		front := [3]poker.Card{c[fIdx[0]], c[fIdx[1]], c[fIdx[2]]}
+		ef := poker.Eval3(&front)
 		bIdx := [5]int{-1, -1, 1, 2, 3}
 		for next4(&bIdx) {
-			var back, middle [5]Card
+			var back, middle [5]poker.Card
 			f, b := 0, 0
 			for i := 0; i < 13; i++ {
 				if f < 3 && fIdx[f] == i {
@@ -97,8 +99,8 @@ func Play(c []Card, he HandEvaluator) (Hand, EvalStats) {
 					middle[i-f-b] = c[i]
 				}
 			}
-			eb := Eval5(&back)
-			em := Eval5(&middle)
+			eb := poker.Eval5(&back)
+			em := poker.Eval5(&middle)
 			if ef >= em || ef >= eb {
 				stats.StrongFront++
 				continue
@@ -165,7 +167,7 @@ type Comparison struct {
 // CompareEvaluators matches the two evaluators against each other on
 // n random hands. Aggregate statistics are returned.
 func CompareEvaluators(hero, villain HandEvaluator, n int, prEvery int) Comparison {
-	cards := append([]Card{}, Cards...)
+	cards := append([]poker.Card{}, poker.Cards...)
 	result := Comparison{}
 	total := float64(0)
 	for hand := 0; hand < n; hand++ {

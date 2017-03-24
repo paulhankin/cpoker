@@ -6,10 +6,12 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/paulhankin/poker"
 )
 
 func BenchmarkPlayProd(b *testing.B) {
-	cards := append([]Card{}, Cards...)
+	cards := append([]poker.Card{}, poker.Cards...)
 	he := MaxProdEvaluator{}
 	for count := 0; count < b.N; count++ {
 		for i := 0; i < 13; i++ {
@@ -24,7 +26,7 @@ func BenchmarkPlayProd(b *testing.B) {
 
 func BenchmarkPlayRollout(b *testing.B) {
 	runtime.GOMAXPROCS(8)
-	cards := append([]Card{}, Cards...)
+	cards := append([]poker.Card{}, poker.Cards...)
 	he := &RolloutEvaluator{
 		Opponent: MaxProdEvaluator{},
 		N:        10000,

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/paulhankin/cpoker"
+	"github.com/paulhankin/poker"
 )
 
 var (
@@ -80,11 +81,11 @@ var ends3 = [][2]string{
 	{"222", "AAA"},
 }
 
-func atoc(s cpoker.Suit, rank rune) cpoker.Card {
+func atoc(s poker.Suit, rank rune) poker.Card {
 	ranks := "-A23456789TJQK"
 	for i, r := range ranks {
 		if r == rank {
-			result, err := cpoker.MakeCard(s, cpoker.Rank(i))
+			result, err := poker.MakeCard(s, poker.Rank(i))
 			if err != nil {
 				log.Fatalf("MakeCard(%v, %v) failed: %s", s, r, err)
 			}
@@ -95,26 +96,26 @@ func atoc(s cpoker.Suit, rank rune) cpoker.Card {
 	return 0
 }
 
-func parseHand(s string) []cpoker.Card {
+func parseHand(s string) []poker.Card {
 	flush := false
-	suits := []cpoker.Suit{cpoker.Club, cpoker.Diamond, cpoker.Spade, cpoker.Heart, cpoker.Club}
+	suits := []poker.Suit{poker.Club, poker.Diamond, poker.Spade, poker.Heart, poker.Club}
 	if s[len(s)-1] == 's' {
 		flush = true
 		s = s[:len(s)-1]
 	}
-	result := make([]cpoker.Card, 0, len(s))
+	result := make([]poker.Card, 0, len(s))
 	for i, c := range s {
 		suit := suits[i]
 		if flush {
-			suit = cpoker.Heart
+			suit = poker.Heart
 		}
 		result = append(result, atoc(suit, c))
 	}
 	return result
 }
 
-func mustDescribeShort(c []cpoker.Card) string {
-	r, err := cpoker.DescribeShort(c)
+func mustDescribeShort(c []poker.Card) string {
+	r, err := poker.DescribeShort(c)
 	if err != nil {
 		log.Fatalf("failed to describe %s: %s", c, err)
 	}
@@ -134,7 +135,7 @@ func ends(se *cpoker.SampledEvaluator) {
 			h1 := parseHand(es[1])
 			d0 := mustDescribeShort(h0)
 			d1 := mustDescribeShort(h1)
-			fmt.Printf("|%12s| %21s &mdash; %-21s &nbsp; | %6.2f &mdash; %6.2f  |\n", "", d0, d1, wins[cpoker.Eval(h0)]*100, wins[cpoker.Eval(h1)]*100)
+			fmt.Printf("|%12s| %21s &mdash; %-21s &nbsp; | %6.2f &mdash; %6.2f  |\n", "", d0, d1, wins[poker.Eval(h0)]*100, wins[poker.Eval(h1)]*100)
 		}
 	}
 	fmt.Println()
@@ -145,9 +146,9 @@ func percents(se *cpoker.SampledEvaluator, x float64) {
 	for i := range parts {
 		wantLen := 3
 		fmt.Println(parts[i])
-		toHand := cpoker.EvalToHand3
+		toHand := poker.EvalToHand3
 		if i > 0 {
-			toHand = cpoker.EvalToHand5
+			toHand = poker.EvalToHand5
 			wantLen = 5
 		}
 		oldp := 0.0
