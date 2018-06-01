@@ -1,5 +1,7 @@
 // Binary strategy outputs tables showing hand-values
 // for a chinese poker hand.
+// For example:
+// strategy -from coefficients.data -mode=ends
 package main
 
 import (
@@ -14,7 +16,7 @@ import (
 
 var (
 	fromFile = flag.String("from", "", "file to load coefficients from")
-	mode     = flag.String("mode", "rank", "all/ends/percent/per5 : show all hands, just the end of each range, or one hand per percent, one hand per 5 percent")
+	mode     = flag.String("mode", "ends", "all/ends/percent/per5 : show all hands, just the end of each range, or one hand per percent, one hand per 5 percent")
 )
 
 var ends5m = [][2]string{

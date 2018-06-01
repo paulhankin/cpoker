@@ -1,4 +1,13 @@
 // Binary train trains and tests chinese poker evaluators.
+// To train a player from scratch:
+//  train -to my_coefficients.data -hands 10000 -train_cycles 20
+//
+// To evaluate a previously trained player against a near-optimal opponent
+//  train -from coefficients.data -eval_hands 10000
+//
+// To evaluate a previously trained player against a very slow but more
+// thorough near-optimal opponent
+//  train -from coefficients.data -eval_hands 20 -eval_printn 1 -eval_rollall
 package main
 
 import (
