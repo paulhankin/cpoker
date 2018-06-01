@@ -1,3 +1,16 @@
+// Package cpoker provides evaluators and training support for Chinese Poker.
+// The rules of the game and the structure of this code is described
+// in http://paulhankin.github.io/ChinesePoker
+//
+// Basic usage of this package, which uses the trained coefficients
+// in the coefficients.data file in this directory is as follows:
+//
+// cards := <construct 13 card slice using github.com/paulhankin/poker>
+// if hero, err = cpoker.LoadSampledEvaluator(*fromFile); err != nil {
+//     log.Fatalf("failed to load evaluator: %s", err)
+// }
+// h, _ : =cpoker.Play(cards, hero)
+// fmt.Println(h) // Shows the played front, middle and back hands.
 package cpoker
 
 import (
