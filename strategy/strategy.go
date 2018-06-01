@@ -152,6 +152,7 @@ func percents(se *cpoker.SampledEvaluator, x float64) {
 			wantLen = 5
 		}
 		oldp := 0.0
+		last := ""
 		for r, p := range se.WinProbabilities(i) {
 			if x != 0 && int(p*x) == int(oldp*x) {
 				continue
@@ -160,7 +161,16 @@ func percents(se *cpoker.SampledEvaluator, x float64) {
 			if !ok || len(h) != wantLen {
 				continue
 			}
-			fmt.Printf("%5.2f : %s\n", 100*p, mustDescribeShort(h))
+			// We can have multiple hands with the same short description.
+			// For example AAA-22, AAA-33, ..., AAA-KK.
+			// We show only the first that appears in the output.
+			// This isn't quite right because the really the output
+			// should be an average, but the differences are tiny.
+			rShort := mustDescribeShort(h)
+			if rShort != last {
+				fmt.Printf("%5.2f : %s\n", 100*p, mustDescribeShort(h))
+				last = rShort
+			}
 			oldp = p
 		}
 		fmt.Println("")
