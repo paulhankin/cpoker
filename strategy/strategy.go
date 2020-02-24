@@ -124,6 +124,18 @@ func mustDescribeShort(c []poker.Card) string {
 	return r
 }
 
+func eval(h []poker.Card) int16 {
+	if len(h) == 3 {
+		h3 := [3]poker.Card{h[0], h[1], h[2]}
+		return poker.Eval3(&h3)
+	} else if len(h) == 5 {
+		h5 := [5]poker.Card{h[0], h[1], h[2], h[3], h[4]}
+		return poker.Eval5(&h5)
+	}
+	log.Fatalf("eval of hand %v", h)
+	return 0
+}
+
 func ends(se *cpoker.SampledEvaluator) {
 	parts := []string{"front", "middle", "back"}
 	fmt.Printf("|            |%-60s| __Winning Percentage__ |\n", " __Hand Range__")
@@ -137,7 +149,7 @@ func ends(se *cpoker.SampledEvaluator) {
 			h1 := parseHand(es[1])
 			d0 := mustDescribeShort(h0)
 			d1 := mustDescribeShort(h1)
-			fmt.Printf("|%12s| %21s &mdash; %-21s &nbsp; | %6.2f &mdash; %6.2f  |\n", "", d0, d1, wins[poker.Eval(h0)]*100, wins[poker.Eval(h1)]*100)
+			fmt.Printf("|%12s| %21s &mdash; %-21s &nbsp; | %6.2f &mdash; %6.2f  |\n", "", d0, d1, wins[eval(h0)]*100, wins[eval(h1)]*100)
 		}
 	}
 	fmt.Println()
