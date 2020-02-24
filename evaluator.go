@@ -10,7 +10,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/paulhankin/poker"
+	"github.com/paulhankin/poker/v2/poker"
 )
 
 // A RolloutEvaluator gives the opponent random hands, sees

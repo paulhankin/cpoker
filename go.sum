@@ -1,2 +1,6 @@
 github.com/paulhankin/poker v0.0.0-20200217201020-a951ccc20687 h1:2REj9rgM0cpY2YekAdHeqOrObrXGH7dFvqNQQ5owWfM=
 github.com/paulhankin/poker v0.0.0-20200217201020-a951ccc20687/go.mod h1:9DIjDyoZAyI7doVsoYBoNg3arc20QsohvreojV/xI/E=
+github.com/paulhankin/poker v1.0.0 h1:g8iPx6qiIhRYz69JZujR4vKDsRKLHcao/MsIKm27ye8=
+github.com/paulhankin/poker v1.0.0/go.mod h1:9DIjDyoZAyI7doVsoYBoNg3arc20QsohvreojV/xI/E=
+github.com/paulhankin/poker/v2 v2.0.2 h1:58t/TBm/xzNGfuH2jfkTGSeq61dcX49yv3/5uVMqb7E=
+github.com/paulhankin/poker/v2 v2.0.2/go.mod h1:cyZB8hE7ihJJ+xJ9xadffU7hmqmq7Gbn5v2yxpvvNcA=

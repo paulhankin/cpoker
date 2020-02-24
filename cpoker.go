@@ -18,7 +18,7 @@ import (
 	"math/rand"
 	"reflect"
 
-	"github.com/paulhankin/poker"
+	"github.com/paulhankin/poker/v2/poker"
 )
 
 // A Hand is a full Chinese poker hand.

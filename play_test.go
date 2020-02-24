@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/paulhankin/poker"
+	"github.com/paulhankin/poker/v2/poker"
 )
 
 func BenchmarkPlayProd(b *testing.B) {

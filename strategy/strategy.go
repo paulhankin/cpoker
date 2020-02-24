@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/paulhankin/cpoker"
-	"github.com/paulhankin/poker"
+	"github.com/paulhankin/poker/v2/poker"
 )
 
 var (
