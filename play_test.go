@@ -19,7 +19,7 @@ func BenchmarkPlayProd(b *testing.B) {
 			cards[i], cards[j] = cards[j], cards[i]
 		}
 		h, max := Play(cards[:13], he)
-		fmt.Printf("%v: %#v\n", h, max)
+		//fmt.Printf("%v: %#v\n", h, max)
 		_, _ = h, max
 	}
 }
@@ -37,7 +37,7 @@ func BenchmarkPlayRollout(b *testing.B) {
 			cards[i], cards[j] = cards[j], cards[i]
 		}
 		h, max := Play(cards[:13], he)
-		fmt.Printf("%v: %#v\n", h, max)
+		//fmt.Printf("%v: %#v\n", h, max)
 		_, _ = h, max
 	}
 }
@@ -47,13 +47,15 @@ func BenchmarkPlayComparison(b *testing.B) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	var hero, villain HandEvaluator
 	hero = MaxProdEvaluator{}
-	for iterations := 0; iterations < 20; iterations++ {
+	for iterations := 0; iterations < 10; iterations++ {
 		hero, villain = NewTrainedSampledEvaluator(hero, 1000), hero
-		fmt.Println("iteration", iterations)
+		b.Log("iteration", iterations)
 	}
-	re := &RolloutEvaluator{PreRollout: true, Separable: true, Opponent: hero, N: 100000}
+	b.Log("preparing rollout evaluator")
+	re := &RolloutEvaluator{PreRollout: true, Separable: true, Opponent: hero, N: 20000}
 	re.Init()
+	b.Log("running comparison")
 	hero, villain = re, hero
-	comparison := CompareEvaluators(hero, villain, 100000, 100)
+	comparison := CompareEvaluators(hero, villain, 1000, 500)
 	fmt.Println(comparison)
 }
